@@ -1,15 +1,16 @@
 from selenium import webdriver
 import time
+from selenium.webdriver.common.by import By
 
-chrome_driver_path = "D:\Development\chromedriver.exe"
+chrome_driver_path = "chromedriver.exe"
 driver = webdriver.Chrome(chrome_driver_path)
 driver.get("http://orteil.dashnet.org/experiments/cookie/")
 
 #Get cookie to click on.
-cookie = driver.find_element_by_id("cookie")
+cookie = driver.find_element(By.ID, "cookie")
 
 #Get upgrade item ids.
-items = driver.find_elements_by_css_selector("#store div")
+items = driver.find_elements(By.CSS_SELECTOR, "#store div")
 item_ids = [item.get_attribute("id") for item in items]
 
 timeout = time.time() + 5
@@ -22,7 +23,7 @@ while True:
     if time.time() > timeout:
 
         #Get all upgrade <b> tags
-        all_prices = driver.find_elements_by_css_selector("#store b")
+        all_prices = driver.find_elements(By.CSS_SELECTOR, "#store b")
         item_prices = []
 
         #Convert <b> text into an integer price.
@@ -38,7 +39,7 @@ while True:
             cookie_upgrades[item_prices[n]] = item_ids[n]
 
         #Get current cookie count
-        money_element = driver.find_element_by_id("money").text
+        money_element = driver.find_element(By.ID, "money").text
         if "," in money_element:
             money_element = money_element.replace(",", "")
         cookie_count = int(money_element)
@@ -54,14 +55,13 @@ while True:
         print(highest_price_affordable_upgrade)
         to_purchase_id = affordable_upgrades[highest_price_affordable_upgrade]
 
-        driver.find_element_by_id(to_purchase_id).click()
+        driver.find_element(By.ID,to_purchase_id).click()
         
         #Add another 5 seconds until the next check
         timeout = time.time() + 5
 
     #After 5 minutes stop the bot and check the cookies per second count.
     if time.time() > five_min:
-        cookie_per_s = driver.find_element_by_id("cps").text
+        cookie_per_s = driver.find_element(By.ID,"cps").text
         print(cookie_per_s)
         break
-
